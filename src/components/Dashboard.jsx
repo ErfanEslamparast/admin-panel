@@ -3,11 +3,10 @@ import { Link } from 'react-router-dom';
 import Loader from './Loader/Loader';
 import CreatePostButton from './CreatePostButton';
 import DeleteModal from './deleteModal';
-import { Trash2 } from 'lucide-react';
 import ToggleSwitch from './ToggleSwitch/ToggleSwitch';
 import RadioButtons from './RadioButtons/RadioButtons';
-import { CSSTransition, TransitionGroup } from 'react-transition-group';
-import './PostTransition.css'; 
+import TagsDropDown from './TagsDropDown ';
+import Post from './Post';
 
 
 export default function Dashboard() {
@@ -22,7 +21,9 @@ export default function Dashboard() {
   const [selectAll, setSelectAll] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalTarget, setModalTarget] = useState(null); 
-  const [imagedPosts, setImagedPosts] = useState([]);
+  const [imagedPosts, setImagedPosts] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('همه');
 
   // this function just gets the userID from the server
   const fetchUserId = async () => {
@@ -47,6 +48,20 @@ export default function Dashboard() {
     const data = await res.json();
     setPosts(data);
   };
+
+
+  async function fetchAllCategories(token) {
+  const res = await fetch('https://api.eeslamparast.host.webr.ir/wp-json/wp/v2/categories?per_page=100', {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!res.ok) throw new Error('خطا در دریافت دسته‌بندی‌ها');
+  const data = await res.json();
+  return data.map(cat => cat.name);
+}
+
+
  //get the posts that user posted by userID
   useEffect(() => {
     if (!token) return;
@@ -54,6 +69,8 @@ export default function Dashboard() {
       try {
         const userId = await fetchUserId();
         await fetchPosts(userId);
+        const allCats = await fetchAllCategories(token);
+        setCategories(allCats);
       } catch (err) {
         console.error('خطا در دریافت پست‌ها:', err);
       } finally {
@@ -66,13 +83,30 @@ export default function Dashboard() {
 
   // for posts sorting
   useEffect(() => {
-  const sorted = [...posts].sort((a, b) => {
+  let filtered = [...posts];
+
+  // filter by category
+  if (selectedCategory && selectedCategory !== 'همه') {
+    if (selectedCategory === 'دسته‌بندی نشده') {
+      filtered = filtered.filter(
+        post => !(post._embedded?.['wp:term']?.[0]?.[0]?.name)
+      );
+    } else {
+      filtered = filtered.filter(
+        post => (post._embedded?.['wp:term']?.[0]?.[0]?.name) === selectedCategory
+      );
+    }
+  }
+
+  // sort by date added
+  filtered.sort((a, b) => {
     const dateA = new Date(a.date).getTime();
     const dateB = new Date(b.date).getTime();
     return order === 'asc' ? dateA - dateB : dateB - dateA;
   });
-  setPostsToShow(sorted);
-}, [order, posts]);
+
+  setPostsToShow(filtered);
+}, [order, posts, selectedCategory]);
 
  // checking all posts selecting for checkmarking the checkbox
   useEffect(() => {
@@ -125,6 +159,10 @@ export default function Dashboard() {
     }
   };
 
+  const handleTagSelect = (tag) => {
+  setSelectedCategory(tag);
+  };
+
   if (loading) return <p className="text-center mt-10"><Loader /></p>;
 
   return (
@@ -135,7 +173,6 @@ export default function Dashboard() {
 
       {postsToShow.length > 0 &&
       (
-        <>
         <div className='flex items-center gap-3'>
           <button
           onClick={() => {
@@ -164,15 +201,13 @@ export default function Dashboard() {
           </label>
         )}
         </div>
-
-        <div className='flex items-center gap-8'>
+        )
+      }
+        <div className='flex items-center gap-8 mx-auto'>
+        <TagsDropDown tags={categories} onTagSelect={handleTagSelect} selected={selectedCategory}/>
         <RadioButtons  {...{ order, setOrder }}/>
         <ToggleSwitch checked={imagedPosts} onChange={setImagedPosts}/>
         </div>
-        </>
-        )
-
-      }
       </div>
 
       {postsToShow.length === 0 ? (
@@ -192,69 +227,20 @@ export default function Dashboard() {
               post._embedded?.['wp:term']?.[0]?.[0]?.name || 'دسته‌بندی نشده';
             const isSelected = selectedPosts.includes(post.id);
 
+
+            const postProps = {
+              multiSelectMode,
+              toggleSelect,
+              isSelected,
+              image,
+              category,
+              setModalTarget,
+              setShowModal
+            }
+
             return (
               
-              <div
-                key={post.id}
-                onClick={() => {
-                  if (multiSelectMode) {
-                    toggleSelect(post.id);
-                  }
-                }}
-                className={`relative flex items-center bg-white text-gray-900 shadow rounded-lg overflow-hidden border group cursor-pointer transition-all  ${
-                  isSelected ? 'ring-3 ring-blue-500 bg-blue-50' : ''
-                }`}
-              >
-                {multiSelectMode ? (
-                  <div className="flex-1 flex items-center">
-                    <img
-                      src={image}
-                      alt={post.title.rendered}
-                      className="w-24 h-24 object-cover ml-4"
-                    />
-                    <div className="flex-1 px-4 py-2">
-                      <h2
-                        className="text-lg font-semibold"
-                        dangerouslySetInnerHTML={{ __html: post.title.rendered }}
-                      />
-                    </div>
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-l me-2.5">
-                      {category}
-                    </span>
-                  </div>
-                ) : (
-                  <Link to={`/post/${post.id}`} className="flex-1 flex items-center">
-                    <img
-                      src={image}
-                      alt={post.title.rendered}
-                      className="w-24 h-24 object-cover ml-4"
-                    />
-                    <div className="flex-1 px-4 py-2">
-                      <h2
-                        className="text-lg font-semibold"
-                        dangerouslySetInnerHTML={{ __html: post.title.rendered }}
-                      />
-                    </div>
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-l me-2.5">
-                      {category}
-                    </span>
-                  </Link>
-                )}
-
-                {!multiSelectMode && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setModalTarget(post.id);
-                      setShowModal(true);
-                    }}
-                    className="absolute left-3 top-2 hidden group-hover:flex items-center gap-0.5 text-red-400 rounded text-[14px] cursor-pointer"
-                  >
-                    <Trash2 size={14}/>
-                    حذف
-                  </button>
-                )}
-              </div>
+              <Post {...{post,postProps}}/>
             );
           })}
         </div>

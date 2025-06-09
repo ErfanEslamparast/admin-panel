@@ -3,7 +3,7 @@ import React from 'react';
 const RadioButtons = ({order,setOrder}) => {
     return (
        
-<div class="flex justify-center w-full px-2 py-1 bg-white border border-gray-300 text-[rgb(72,72,72)] rounded-2xl text-[12px]">
+<div class="flex justify-center w-65 px-2 py-1 bg-white border border-gray-300 text-[rgb(72,72,72)] rounded-2xl text-[12px]">
     <p className='me-1'>چینش براساس:</p>
     <div class="flex items-center me-1.5">
         <input id="inline-2-radio" type="radio" value="desc" name="inline-radio-group"
