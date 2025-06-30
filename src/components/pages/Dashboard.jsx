@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import Loader from './Loader/Loader';
-import CreatePostButton from './CreatePostButton';
-import DeleteModal from './deleteModal';
-import ToggleSwitch from './ToggleSwitch/ToggleSwitch';
-import RadioButtons from './RadioButtons/RadioButtons';
-import TagsDropDown from './TagsDropDown ';
-import Post from './Post';
+import Loader from '../Loader/Loader';
+import CreatePostButton from '../CreatePostButton';
+import DeleteModal from '../deleteModal';
+import ToggleSwitch from '../ToggleSwitch/ToggleSwitch';
+import RadioButtons from '../RadioButtons';
+import TagsDropDown from '../TagsDropDown ';
+import Post from '../Post';
 
 
 export default function Dashboard() {
@@ -167,7 +166,7 @@ export default function Dashboard() {
 
   return (
     <div className="p-4 max-w-5xl mx-auto min-h-120 transition-all duration-300 ease-in-out">
-      <h1 className="text-2xl font-bold mb-6">پست‌های شما</h1>
+      <h1 className="text-2xl font-bold mb-6 text-[rgb(72,72,72)]">پست‌های شما</h1>
 
       <div className="mb-4 flex items-center gap-4 justify-between">
 
@@ -191,7 +190,7 @@ export default function Dashboard() {
           {multiSelectMode ? 'حذف موارد انتخاب شده' : 'حذف چندتایی'}
         </button>
         {multiSelectMode && (
-          <label className="flex items-center gap-2 text-sm cursor-pointer">
+          <label className="flex items-center gap-2 text-sm text-[rgb(72,72,72)] cursor-pointer">
             <input
               type="checkbox"
               checked={selectAll}
@@ -203,17 +202,17 @@ export default function Dashboard() {
         </div>
         )
       }
-        <div className='flex items-center gap-8 mx-auto'>
+        <div className={`flex items-center gap-8  ${postsToShow.length > 0 ? 'ms-auto' : 'mx-auto'} `}>
+          
         <TagsDropDown tags={categories} onTagSelect={handleTagSelect} selected={selectedCategory}/>
         <RadioButtons  {...{ order, setOrder }}/>
         <ToggleSwitch checked={imagedPosts} onChange={setImagedPosts}/>
         </div>
       </div>
-
       {postsToShow.length === 0 ? (
         <CreatePostButton />
       ) : (
-        <div className="grid gap-2">
+        <div className="grid gap-2 max-h-100">
           
           {
           (

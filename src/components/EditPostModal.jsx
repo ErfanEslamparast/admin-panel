@@ -1,169 +1,3 @@
-// // components/EditPostModal.jsx
-// import React, { useEffect, useState } from 'react';
-
-// export default function EditPostModal({ post, onClose, onUpdate }) {
-//   const [title, setTitle] = useState('');
-//   const [content, setContent] = useState('');
-//   const [categories, setCategories] = useState([]);
-//   const [selectedCategory, setSelectedCategory] = useState(null);
-//   const [imageFile, setImageFile] = useState(null);
-//   const [imageName, setImageName] = useState('');
-//   const [loading, setloading] = useState(false);
-//   const [uploading, setUploading] = useState(false);
-
-//   useEffect(() => {
-//     if (post) {
-//       const tmp = document.createElement('div');
-//       tmp.innerHTML = post.title.rendered;
-//       setTitle(tmp.textContent || '');
-
-//       tmp.innerHTML = post.content.rendered;
-//       setContent(tmp.textContent || '');
-
-//       setSelectedCategory(post.categories?.[0] || null);
-//     }
-//   }, [post]);
-
-//   const fetchCategories = async () => {
-//     const res = await fetch('https://api.eeslamparast.host.webr.ir/wp-json/wp/v2/categories');
-//     const data = await res.json();
-//     setCategories(data);
-//   };
-
-//   useEffect(() => {
-//     fetchCategories();
-//   }, []);
-
-//   const handleSubmit = async () => {
-//     setloading(true)
-//     const token = localStorage.getItem('token');
-    
-//     let featuredMediaId = post.featured_media;
-    
-    
-//     setUploading(true);
-//     if (imageFile) {
-//       const formData = new FormData();
-//       formData.append('file', imageFile);
-
-//       const res = await fetch('https://api.eeslamparast.host.webr.ir/wp-json/wp/v2/media', {
-//         method: 'POST',
-//         headers: {
-//           Authorization: `Bearer ${token}`,
-//         },
-//         body: formData,
-//       });
-
-//       const imgData = await res.json();
-//        setImageName(imgData.title.rendered);
-//       featuredMediaId = imgData.id;
-//       setUploading(false)
-//       setloading(false)
-//     }
-
-
-//     await fetch(`https://api.eeslamparast.host.webr.ir/wp-json/wp/v2/posts/${post.id}`, {
-//       method: 'POST',
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//         'Content-Type': 'application/json',
-//       },
-//       body: JSON.stringify({
-//         title,
-//         content,
-//         categories: selectedCategory ? [selectedCategory] : [],
-//         featured_media: featuredMediaId,
-//       }),
-//     });
-
-//     onUpdate();
-//     onClose();  
-//   };
-
-//   return (
-//     <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-//       <div className="bg-white rounded-lg p-6 w-full max-w-lg shadow-lg">
-//         <h2 className="text-xl font-bold mb-4">ویرایش پست</h2>
-//         <label htmlFor='title' className="block mb-2 text-[rgb(72,72,72)]">تیتر پست:</label>
-//         <input
-//         id='title'
-//           value={title}
-//           onChange={(e) => setTitle(e.target.value)}
-//           className="w-full border border-gray-300 text-[rgb(72,72,72)] p-2 rounded mb-4"
-//         />
-
-//         <label htmlFor='content' className="block mb-2 text-[rgb(72,72,72)]">محتوای پست:</label>
-//         <textarea
-//         id='content'
-//           rows="6"
-//           value={content}
-//           onChange={(e) => setContent(e.target.value)}
-//           className="w-full border border-gray-300 text-[rgb(72,72,72)] p-2 rounded mb-4"
-//         />
-
-//         <label htmlFor='category' className="block mb-2 text-[rgb(72,72,72)]">دسته‌بندی:</label>
-//         <select
-//         id='category'
-//           value={selectedCategory || ''}
-//           onChange={(e) => setSelectedCategory(Number(e.target.value))}
-//           className="w-full border border-gray-300 text-[rgb(72,72,72)] p-2 rounded mb-4"
-//         >
-//           {categories.map((cat) => (
-//             <option key={cat.id} value={cat.id}>
-//               {cat.name}
-//             </option>
-//           ))}
-//         </select>
-
-//          <label
-//           htmlFor="img"
-//           className="block w-full mb-2 p-2 bg-gray-200 text-[rgb(72,72,72)] rounded cursor-pointer text-center hover:bg-gray-200"
-//         >
-//             {!uploading && !imageName &&(
-//                 <span>عکس جدید را بارگذاری کنید (اختیاری)</span>
-//             )}
-//         {uploading && (
-//             <span className="text-blue-600 animate-pulse text-sm">در حال آپلود...</span>
-//         )}
-
-//         {!uploading && imageName && (
-//             <span className="text-green-600 text-sm">✅ {imageName}</span>
-//         )}
-//         </label>
-//         <input
-//         id='img'
-//           type="file"
-//           accept="image/*"
-//           onChange={(e) => {
-//             setImageFile(e.target.files[0]);
-//             setImageName(e.target.files[0]?.name || '')
-//             handleImageUpload()
-//         }}
-//           className="mb-4"
-//           disabled={uploading}
-//         />
-
-//         <div className="flex justify-end gap-4">
-//           <button 
-//            onClick={handleSubmit}
-//            disabled={loading}
-//            className="bg-blue-600 text-white px-4 py-2 rounded cursor-pointer hover:bg-blue-700 disabled:opacity-60">
-//            {loading ? 'در حال بارگذاری...' : 'ذخیره تغییرات'}
-//           </button>
-//           <button onClick={onClose} className="bg-gray-200 text-gray-800 px-4 py-2 rounded cursor-pointer hover:bg-gray-300">
-//             انصراف
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
-
-// components/EditPostModal.jsx
 import React, { useEffect, useState } from 'react';
 
 export default function EditPostModal({ post, onClose, onUpdate }) {
@@ -261,20 +95,22 @@ export default function EditPostModal({ post, onClose, onUpdate }) {
         return;
       }
     }
-    
+    const postBody = {
+        title,
+        content,
+        excerpt:summary,
+        categories: selectedCategory ? [selectedCategory] : [],
+        featured_media: featuredMediaId,
+      }
+
+
     await fetch(`https://api.eeslamparast.host.webr.ir/wp-json/wp/v2/posts/${post.id}`, {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        title,
-        content,
-        excerpt:summary,
-        categories: selectedCategory ? [selectedCategory] : [],
-        featured_media: featuredMediaId,
-      }),
+      body: JSON.stringify(postBody),
     });
 
     onUpdate();
@@ -294,14 +130,19 @@ export default function EditPostModal({ post, onClose, onUpdate }) {
           className="w-full border border-gray-300 text-[rgb(72,72,72)] p-2 rounded mb-4"
         />
 
-        <label htmlFor='title' className="block mb-2 text-[rgb(72,72,72)]">خلاصه پست:</label>
+        <label htmlFor='title' className="block mb-2 text-[rgb(72,72,72)]">خلاصه پست:  <span className='text-[10px] text-gray-400'>(حداکثر ۲۵۰ کاراکتر)</span></label>
         <input
           id='title'
           value={summary}
           onChange={(e) => setSummary(e.target.value)}
+          maxLength={250}
           className="w-full border border-gray-300 text-[rgb(72,72,72)] p-2 rounded mb-4"
         />
-
+        {summary.length === 250 && (
+          <p className="text-[10px] text-red-600 -mt-2 mb-2">
+            شما بیشتر از ۲۵۰ کاراکتر نمی‌توانید تایپ کنید
+          </p>
+        )}
         <label htmlFor='content' className="block mb-2 text-[rgb(72,72,72)]">محتوای پست:</label>
         <textarea
           id='content'

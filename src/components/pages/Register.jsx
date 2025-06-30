@@ -36,7 +36,7 @@ export default function Register() {
       setIsError(false)
       setMessage(` کاربر "${data.username}" با موفقیت ثبت شد`);
       setTimeout(() => {
-        navigate("/")
+        navigate("/login")
       }, 1500);
     } catch (err) {
       setIsError(true);

@@ -21,7 +21,7 @@ const Post = ({post,postProps}) => {
                     toggleSelect(post.id);
                   }
                 }}
-                className={`relative flex items-center bg-white text-gray-900 shadow rounded-lg overflow-hidden border group cursor-pointer transition-all  ${
+                className={`relative flex items-center bg-white text-gray-900 shadow-md rounded-lg overflow-hidden border group cursor-pointer transition-all  ${
                   isSelected ? 'ring-3 ring-blue-500 bg-blue-50' : ''
                 }`}
               >
@@ -51,7 +51,7 @@ const Post = ({post,postProps}) => {
                     />
                     <div className="flex-1 px-4 py-2">
                       <h2
-                        className="text-lg font-semibold"
+                        className="text-lg font-semibold text-[rgb(72,72,72)]"
                         dangerouslySetInnerHTML={{ __html: post.title.rendered }}
                       />
                     </div>

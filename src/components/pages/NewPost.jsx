@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Loader from './Loader/Loader';
+import Loader from '../Loader/Loader';
 
 export default function NewPost() {
   const [title, setTitle] = useState('');
@@ -9,10 +9,15 @@ export default function NewPost() {
   const [image, setImage] = useState(null);
   const [categories, setCategoies] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [mediaId, setMediaId] = useState(null);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [firstLoading, setFirstLoading] = useState(true);
   const [isError, setIsError] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [imageName, setImageName] = useState('');
+
   const navigate = useNavigate();
   setTimeout(() => setFirstLoading(false), 700);
 
@@ -25,34 +30,60 @@ export default function NewPost() {
       .catch((err) => console.error("خطا در دریافت تگ‌ها:", err));
   }, []);
 
-  // آپلود عکس و دریافت mediaId
-  const uploadImage = async () => {
+
+  const uploadImage = () => {
+  return new Promise((resolve, reject) => {
+    if (!image) return resolve(null);
+
+    setUploading(true);
+    setUploadProgress(0);
+
     const formData = new FormData();
     formData.append('file', image);
 
-    const res = await fetch("https://api.eeslamparast.host.webr.ir/wp-json/wp/v2/media", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-      body: formData
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://api.eeslamparast.host.webr.ir/wp-json/wp/v2/media');
+
+    xhr.upload.addEventListener('progress', (e) => {
+      if (e.lengthComputable) {
+        const percent = Math.round((e.loaded / e.total) * 100);
+        setUploadProgress(percent);
+      }
     });
 
-    const data = await res.json();
-    if (res.ok) return data.id;
-    else throw new Error(data.message || "خطا در آپلود تصویر");
-  };
+    xhr.onload = () => {
+      const res = JSON.parse(xhr.responseText);
+      setImageName(res.title?.rendered || image.name);
+      setUploading(false);
+      if (xhr.status >= 200 && xhr.status < 300) {
+        resolve(res.id);
+      } else {
+        reject(new Error(res.message || "خطا در آپلود تصویر"));
+      }
+    };
 
+    xhr.onerror = () => {
+      setUploading(false);
+      reject(new Error('خطا در آپلود تصویر'));
+    };
+
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    xhr.send(formData);
+  });
+};
+useEffect(() => {
+     if (image) {
+    uploadImage().then(id => setMediaId(id));
+  }
+    }, [image]);
+
+//****** */
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage('');
 
     try {
-      let mediaId = null;
-      if (image) {
-        mediaId = await uploadImage();
-      }
 
       const postBody = {
         title,
@@ -102,12 +133,17 @@ export default function NewPost() {
       />
       <input
         type="text"
-        placeholder="خلاصه پست"
+        placeholder="خلاصه پست (حداکثر ۲۵۰ کاراکتر)"
         value={summary}
         onChange={(e) => setSummary(e.target.value)}
+        maxLength={250}
         className="w-full mb-4 px-4 py-2 border border-gray-300 text-[rgb(72,72,72)] rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
-
+        {summary.length === 250 && (
+          <p className="text-[10px] text-red-600 -mt-2 mb-2">
+            شما بیشتر از ۲۵۰ کاراکتر نمی‌توانید تایپ کنید
+          </p>
+        )}
       <textarea
         placeholder="متن پست"
         value={content}
@@ -121,14 +157,33 @@ export default function NewPost() {
           htmlFor="fileUpload"
           className="block w-full px-4 py-2 bg-gray-100 text-[rgb(72,72,72)] rounded cursor-pointer text-center hover:bg-gray-200"
         >
-         عکس موردنظر را انتخاب کنید
+         {!uploading && !imageName && <span>عکس موردنظر را انتخاب کنید</span>}
+         {uploading && (
+      <div>
+        <div className="bg-gray-300 h-2 rounded-full overflow-hidden">
+          <div
+            className="bg-blue-600 h-2"
+            style={{ width: `${uploadProgress}%`, transition: 'width 0.3s ease-in-out' }}
+          />
+        </div>
+        <p className="text-xs text-blue-600 mt-1 text-center">{uploadProgress}%</p>
+      </div>
+    )}
+        {!uploading && imageName && (
+      <span className="text-green-600 text-sm">✅ {imageName}</span>
+    )}
         </label>
         <input
             id="fileUpload"
             type="file"
             accept="image/*"
-            onChange={(e) => setImage(e.target.files[0])}
+            onChange={(e) => {
+              setImage(e.target.files[0]);
+              setImageName('');
+              setUploadProgress(0);
+            }}
             className="hidden"
+            disabled={uploading}
          />
         </div>
 
@@ -148,7 +203,7 @@ export default function NewPost() {
       <button
         type="submit"
         disabled={loading}
-        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+        className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50 cursor-pointer"
       >
         {loading ? "در حال ارسال..." : "ارسال پست"}
       </button>

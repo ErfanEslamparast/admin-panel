@@ -29,10 +29,10 @@ function handleSelect(tag) {
    const allTags = ['همه', ...tags.filter(tag => tag !== 'همه')];
 
   return (
-    <div className="w-72 relative text-black" ref={dropdownRef}>
+    <div className="w-50 relative text-[rgb(72,72,72)]" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 flex justify-between items-center"
+        className="w-50 bg-white border border-gray-300 rounded-md shadow-sm px-3 py-2 text-left cursor-pointer focus:outline-none focus:ring-1 focus:ring-blue-500 flex justify-between items-center"
         aria-haspopup="listbox"
         aria-expanded={isOpen}
       >

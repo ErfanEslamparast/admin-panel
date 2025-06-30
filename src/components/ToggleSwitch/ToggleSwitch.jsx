@@ -4,7 +4,7 @@ import "./ToggleSwitch.css"
 const ToggleSwitch = ({ checked, onChange }) => {
     return (
     <div className='flex items-center gap-2.5 ' >
-        <span className='text-[11px]  block text-nowrap'>پست‌های عکس دار</span>
+        <span className='text-[11px]  block text-nowrap text-[rgb(72,72,72)]'>پست‌های عکس دار</span>
         <label className="switch">
           <input type="checkbox"
           checked={checked}
