@@ -8,6 +8,8 @@ import SinglePost from './components/pages/SinglePost';
 import NewPost from './components/pages/NewPost';
 import Sidebar from './components/Sidebar';
 import Homepage from './components/pages/homepage';
+import Footer from './components/Footer';
+
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -15,9 +17,10 @@ const Layout = ({ children }) => {
   const newPost = ["/new-post"].includes(location.pathname);
 
   return (
-    <div className="flex h-screen">
-      {!hideSidebar && <Sidebar />}
+    <div className="flex min-h-screen">
+        {!hideSidebar && <Sidebar />}
       <main className={`w-full flex justify-center ${newPost ? 'items-center' : ''} `}>{children}</main>
+     
     </div>
   );
 };

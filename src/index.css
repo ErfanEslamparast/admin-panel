@@ -49,12 +49,14 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-  max-width: 1519px;
+  max-width: 1536px;
   margin: 0 auto;
   font-family: "Vazir";
   direction: rtl;
-  background-color: #f5f4f4;
+  /* background-color: #f5f4f4; */
+  background-color: #f1f1f1;
 }
+
 #root {
   width: 100%;
   height: 100vh;

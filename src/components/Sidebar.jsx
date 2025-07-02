@@ -37,6 +37,7 @@ export default function Sidebar() {
 
   const handleLogout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("username");
     setIsOpen(false);
     setTimeout(() => navigate("/login"), 500);
   };

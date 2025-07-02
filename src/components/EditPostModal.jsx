@@ -19,6 +19,9 @@ export default function EditPostModal({ post, onClose, onUpdate }) {
       tmp.innerHTML = post.title.rendered;
       setTitle(tmp.textContent || '');
 
+      tmp.innerHTML = post.excerpt.rendered;
+      setSummary(tmp.textContent || '');
+
       tmp.innerHTML = post.content.rendered;
       setContent(tmp.textContent || '');
 

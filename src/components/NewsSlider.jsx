@@ -13,7 +13,7 @@ const NewsSlider = ({ posts, loading }) => {
   useEffect(() => {
     if (!posts || posts.length === 0) return;
 
-    // تابع برای انتخاب اندیس رندوم متفاوت با قبلی
+    
     const getRandomIndex = (prev, length) => {
       if (length <= 1) return 0;
       let rnd;
@@ -26,12 +26,12 @@ const NewsSlider = ({ posts, loading }) => {
     if (show) {
       timerRef.current = setTimeout(() => {
         setShow(false);
-      }, 10000); // مدت حرکت Marquee
+      }, 9970);
     } else {
       timerRef.current = setTimeout(() => {
         setRandomIndex(prev => getRandomIndex(prev, posts.length));
         setShow(true);
-      }, 4000); // مدت توقف
+      }, 4000);
     }
 
     return () => clearTimeout(timerRef.current);

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate,Link } from 'react-router-dom';
+import { Eye, EyeOff } from "lucide-react";
 
 
 export default function Register() {
@@ -9,6 +10,7 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
     const navigate=useNavigate()
@@ -71,13 +73,23 @@ export default function Register() {
           onChange={(e) => setEmail(e.target.value)}
           className="w-full mb-4 px-4 py-2 border border-gray-300 text-[rgb(72,72,72)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
-        <input
-          type="password"
-          placeholder="رمز عبور"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full mb-4 px-4 py-2 border border-gray-300 text-[rgb(72,72,72)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+       <div className="relative w-full mb-4">
+         <input
+           type={showPassword ? "text" : "password"}
+           placeholder="رمز عبور"
+           value={password}
+           onChange={(e) => setPassword(e.target.value)}
+           className="w-full px-4 py-2 pl-10 border border-gray-300 text-[rgb(72,72,72)] rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+         />
+         <button
+           type="button"
+           className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 cursor-pointer"
+           onClick={() => setShowPassword((prev) => !prev)}
+           tabIndex={-1}
+         >
+           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+         </button>
+       </div>
         <button
           onClick={handleRegister}
           disabled={loading}

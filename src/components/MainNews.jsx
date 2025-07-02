@@ -4,11 +4,10 @@ import { Link } from 'react-router-dom';
 
 const MainNews = ({posts}) => {
     return (
-        <div className="w-full md:w-3/4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-4">
           {posts.map((post) => (
             
-            <Link to={`/post/${post.id}`} key={post} className="relative h-60 bg-gray-300 rounded overflow-hidden shadow group">
-              {console.log(post)}
+            <Link to={`/post/${post.id}`} key={post.id} className="relative h-60 bg-gray-300 rounded overflow-hidden shadow group">
               <span className='absolute inset-0  ms-2 mt-2 z-30 text-[12px] bg-blue-100 text-blue-700 px-1.5 py-1 rounded inline-block h-fit w-fit'>{post._embedded?.['wp:term']?.[0]?.[0]?.name || 'دسته‌بندی نشده'}</span>
               <img
                 src={post._embedded?.['wp:featuredmedia']?.[0]?.source_url || 'src/assets/images/default.png'}
